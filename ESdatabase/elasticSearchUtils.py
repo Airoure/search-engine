@@ -31,7 +31,7 @@ def delete_index(index):
 
 def add_to_elastic(index=None, title=None, content=None, href=None, _type=None,
                    date=None):
-    '''
+    """
     将一个条目加入到数据库中。
     :param index: 用于该条目的索引
     :param title: 该条目的标题
@@ -40,7 +40,7 @@ def add_to_elastic(index=None, title=None, content=None, href=None, _type=None,
     :param _type: 该条目的类型，检索条目时使用
     :param date: 该条目的日期，最好是发布日期
     :return: 在ElasticSearch库中存放的形式，字典
-    '''
+    """
     data = {
         'title': title,
         'content': content,
@@ -121,7 +121,7 @@ def search_from_elastic(index=None, dsl=None):
                             i['_source']['href'],
                             i['_source']['date'],
                             i['_source']['content'],
-                            i['_source']['id'])
+                            i['_id'])
                 li.append(re)
     return li
 
@@ -139,12 +139,14 @@ def default_search(index=None, keyword=None):
                 'should': [
                     {
                         'query_string': {
-                            'title': keyword
+                            'default_field': 'title',
+                            'query': keyword
                         }
                     },
                     {
                         'query_string': {
-                            'content': keyword
+                            'default_field': 'content',
+                            'query': keyword
                         }
                     }
                 ]
