@@ -1,6 +1,12 @@
 import json
 from elasticsearch import Elasticsearch
-
+"""
+ElasticSearch的工具类，将elasticsearch库中的部分函数特化处理，以方便项目使用。
+使用步骤：
+第一步：使用add_index函数添加索引
+第二步：使用add_index_mapping函数给索引更新mapping（搜索策略），注意index、doc_type这两个参数不能为空
+然后就可以使用add_to_elastic函数向服务器添加数据
+"""
 es = Elasticsearch()
 
 IK_MAX_WORD = 'ik_max_word'
@@ -48,7 +54,7 @@ def add_to_elastic(index=None, title=None, content=None, href=None, _type=None,
         'type': _type,
         'date': date
     }
-    es.index(index=index, doc_type=_type, body=data)
+    es.index(index=index, body=data)
     return data
 
 
@@ -64,7 +70,7 @@ def add_to_elastic(index=None, record=None):
     return data
 
 
-def add_index_mapping(index=None, doc_type=None, field=['title', 'content'],
+def add_index_mapping(index=None, doc_type="_doc", field=['title', 'content'],
                       mapping_type='text', analyzer='ik_max_word',
                       search_analyzer='ik_max_word'):
     """
