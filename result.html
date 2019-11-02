@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>搜索</title>
+<link rel="stylesheet" href="../static/css/searchcss.css" type="text/css">
+
+	<style>
+		* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+	ul {
+    list-style-type: none;
+    margin-top: 10px;
+    padding: 0;
+    overflow: hidden;
+    border: 1px solid #e7e7e7;
+    background-color: #f3f3f3;
+}
+
+li {
+    float: left;
+	width: 100px;
+	cursor: pointer;
+}
+
+li a {
+    display: block;
+    color: #666;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+li a:hover:not(.active) {
+    background-color: #ddd;
+}
+
+li a.active {
+    color: white;
+    background-color: #4CAF50;
+}
+li a.noactive {
+
+}
+	.a{
+		position: relative;
+		color:midnightblue;
+		left: 20px;
+	}
+.d1{
+		width: 65%;
+		height: 900px;
+		float: left;
+		margin-top:30px;
+
+	}
+.d2{
+		width: 100%;
+		height: 120px;
+		background-color:#F8F8F8;
+		left: 0px;
+		position: relative;
+		transition-duration: 0.5s;
+		margin-top: 10px;
+		border-left: solid;
+		border-left-color: midnightblue;
+		border-left-width: 6px;
+	}
+	.d2:hover{
+
+		transform: translateY(-10px);
+		transform: translateX(10px);
+        -webkit-box-shadow: #ccc 0px 10px 10px;
+        -moz-box-shadow: #ccc 0px 10px 10px;
+        box-shadow: #ccc 0px 10px 10px;  }
+
+	.d3{
+		margin-top: 40PX;
+		width: 2px;
+		height: 1290px;
+		margin-left: 50px;
+		background-color: #E1E1E1;
+		float: left;
+
+	}
+	    		.drop{
+    			height:50px;
+				width:165px;
+				color:#fffad9;
+				background-color:#6e59b2;
+				border: none;
+				cursor: pointer;
+				font-size: 150%;
+    		}
+	*{
+            margin: 0;
+            padding: 0;
+            border: none;
+        }
+        .x{
+            display: inline-block;
+
+            margin-left: 24%;
+            position: relative;
+        }
+        .k{
+            width: 536px;
+            height: 38px;
+            border: 1px solid #cccccc;
+            float: left;
+            box-sizing: border-box;
+			border-top: #ccc solid 1px;
+			border-right: none;
+			border-bottom: #ccc solid 1px;
+			border-left: #ccc solid 1px;
+			border-radius: 4px 0 0 4px;
+        }
+		 .x.k>input{
+		outline: none;
+		border: none;
+		padding: 0 80px 0 10px;
+		margin: 0;
+		height: 44px;
+		width: 410px;
+		color: #333;
+		font-size: 16px;
+		border-radius: 4px 0 0 4px;
+	}
+        .n{
+            width: 102px;
+            height: 38px;
+            line-height: 40px;
+            float: left;
+            background-color:#4CAF50;
+            font-size: 16px;
+            /*鼠标悬停按钮上方，光标成手指样式*/
+            cursor: pointer;
+			background-position: center;
+			background-repeat: no-repeat;
+			border-radius: 0 4px 4px 0;
+			color: white;
+        }
+	</style>
+
+</head>
+
+<body>
+
+<div>
+<br><br>
+<form action="/result" method="post">
+<span class="x">
+    <input type="text" class="k" name="searchWord" autocomplete="off" value="{{result}}">
+	<input type="submit" value="搜索" class="n">
+
+</span>
+	<div class="main">
+<ul>
+<li id="首页"><a class="active" >首页</a></li>
+<li id="学院新闻"><a class="noactive">学院新闻</a></li>
+<li id="院务公开"><a class="noactive">院务公开</a></li>
+<li id="科研信息"><a class="noactive">科研信息</a></li>
+<li id="科研工作"><a class="noactive">科研工作</a></li>
+<li id="学生工作"><a class="noactive">学生工作</a></li>
+<li id="教学工作"><a class="noactive">教学工作</a></li>
+<li id="就业工作"><a class="noactive">就业工作</a></li>
+<li id="会议通知"><a class="noactive">会议通知</a></li>
+<li id="通知公告"><a class="noactive">通知公告</a></li>
+<li id="学院风光"><a class="noactive">学院风光</a></li>
+</ul>
+
+		</div>
+</form>
+
+<div class="d1">
+	{% for i in result %}
+	<div class="d2" id="{{i[4]}}">
+		<a href={{i[2]}}  style="position: relative;color:midnightblue;" target="_blank" class="a"><h3 >{{i[0]}}</h3></a>
+
+		<div>
+			<h4>{{i[1][0:89]}}......</h4>
+		</div>
+		<div style="position: relative;width: 100%; color: #9999B4;bottom: -25px;">
+			<div style="float: left;">
+				{{i[3]}}
+			</div >
+			<div style="float: right;position: relative;right: 18px;">{{i[4]}}</div>
+		</div>
+		<P><br></P>
+
+	</div>
+{% endfor %}
+<div style="height: 60px;"></div>
+
+</div>
+
+
+<div class="d3"></div>
+
+</div>
+
+</body>
+</html>
