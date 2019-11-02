@@ -4,13 +4,13 @@ from elasticsearch import Elasticsearch
 ElasticSearch的工具类，将elasticsearch库中的部分函数特化处理，以方便项目使用。
 使用步骤：
 第一步：使用add_index函数添加索引
-第二步：使用add_index_mapping函数给索引更新mapping（搜索策略），注意index、doc_type这两个参数不能为空
+第二步：使用add_index_mapping函数给索引更新mapping（搜索策略），注意index这个参数不能为空
 然后就可以使用add_to_elastic函数向服务器添加数据
 """
 es = Elasticsearch()
 
-IK_MAX_WORD = 'ik_max_word'
-IK_SMART = 'ik_smart'
+IK_MAX_WORD = 'ik_max_word'  # 极致细分
+IK_SMART = 'ik_smart'  # 粒度较大
 
 
 def add_index(index):
@@ -81,7 +81,7 @@ def add_index_mapping(index=None, doc_type="_doc", field=['title', 'content'],
     :param mapping_type: 'text'\'keyword'\'number'\'array'\'date'等，
         指定数据类型，这里默认为'text'类型
     :param analyzer: 指定使用的分词器，由于默认分词器汉字支持不好，使用ik分词器ik_max_word（极致细分）
-    :param search_analyzer: 搜索时使用的分词器，这里默认为ik_max_word（粒度较大）
+    :param search_analyzer: 搜索时使用的分词器，这里默认为ik_max_word（极致细分）
     :return:
     """
     mappings = {
@@ -112,12 +112,12 @@ def search_from_elastic(index=None, dsl=None):
     :return: 查询结果的列表，每条查询结果封装成类。
     """
     result = es.search(index=index, body=dsl, scroll='5m', size=1000)
-    print(json.dumps(result, indent=4, ensure_ascii=False))
     li = []
     total = result['hits']['total']['value']
     scroll_id = result['_scroll_id']
     if total is not 0:
         for k in range(0, int(total/1000)+1):
+            print(json.dumps(result, indent=4, ensure_ascii=False))
             if k is not 0:
                 result = es.scroll(scroll_id=scroll_id, scroll='5m')
                 scroll_id = result['_scroll_id']
@@ -129,7 +129,11 @@ def search_from_elastic(index=None, dsl=None):
                             i['_source']['content'],
                             i['_id'])
                 li.append(re)
-    return li
+    results = {
+        'total': total,
+        'list': li
+    }
+    return results
 
 
 def default_search(index=None, keyword=None):
@@ -137,7 +141,7 @@ def default_search(index=None, keyword=None):
     默认搜索函数，默认搜索title、content字段内容。
     :param index: 索引名
     :param keyword: 关键字
-    :return: Record对象的列表
+    :return: 字典{命中条数，搜索结果的Record列表}
     """
     dsl = {
         'query': {
@@ -159,8 +163,7 @@ def default_search(index=None, keyword=None):
             }
         }
     }
-    li = search_from_elastic(index, dsl)
-    return li
+    return search_from_elastic(index, dsl)
 
 
 class Record:
@@ -211,12 +214,33 @@ class Record:
         return _dict
 
 
-class Dsl:
-    def __init__(self, query=None, delete=None):
-        self.query = query
-        self.delete = delete
+class DSL:
+    """
+    查询语句封装类。
+    """
+    def __init__(self):
+        self.query = {
+            'query': {
+                'bool': {
+                    'should': [],
+                    'must': [],
+                    'must_not': []
+                }
+            }
+        }
 
-    def set_query(self, query):
+    def get_query(self):
+        return self.query
+
+    def set_query_full(self, query={}):
         self.query = query
 
+    def set_query_should(self, should=[]):
+        self.query['query']['bool']['should'] = should
+
+    def set_query_must(self, must=[]):
+        self.query['query']['bool']['must'] = must
+
+    def set_query_must_not(self, must_not=[]):
+        self.query['query']['bool']['must_not'] = must_not
 
