@@ -109,11 +109,12 @@ def search_from_elastic(index=None, dsl=None):
     查询数据库中数据
     :param index: 索引名称
     :param dsl: 编写好的查询语句
-    :return: 查询结果的列表，每条查询结果封装成类。
+    :return: 字典{命中条数，查询时间(以毫秒为单位)，搜索结果的Record列表}
     """
     result = es.search(index=index, body=dsl, scroll='5m', size=1000)
     li = []
     total = result['hits']['total']['value']
+    time = result['took']
     scroll_id = result['_scroll_id']
     if total is not 0:
         for k in range(0, int(total/1000)+1):
@@ -131,9 +132,47 @@ def search_from_elastic(index=None, dsl=None):
                 li.append(re)
     results = {
         'total': total,
+        'took': time,
         'list': li
     }
     return results
+
+
+def higher_search(index=None, dsl=None):
+    """
+    高级搜索，需要用到这个py文件中的DSL类。因此，需要对dsl对象先特殊设置。
+    :param index: 索引名
+    :param dsl: DSL类的对象，不可为空。
+    :return: 字典{命中条数，查询时间(以毫秒为单位)，搜索结果的Record列表}
+    """
+    if dsl is None:
+        print("---dsl类对象是空的，无法执行查询！---")
+        return
+    return search_from_elastic(index, dsl)
+
+
+def default_search_type(index=None, _type=None):
+    """
+    指定一个类型名，搜索库中所有该类型的文章
+    :param index: 索引名
+    :param _type: 类型名
+    :return: 字典{命中条数，查询时间(以毫秒为单位)，搜索结果的Record列表}
+    """
+    dsl = {
+        'query': {
+            'bool': {
+                'should': [
+                    {
+                        'query_string': {
+                            'default_field': 'type',
+                            'query': _type
+                        }
+                    }
+                ]
+            }
+        }
+    }
+    return search_from_elastic(index, dsl)
 
 
 def default_search(index=None, keyword=None):
@@ -141,7 +180,7 @@ def default_search(index=None, keyword=None):
     默认搜索函数，默认搜索title、content字段内容。
     :param index: 索引名
     :param keyword: 关键字
-    :return: 字典{命中条数，搜索结果的Record列表}
+    :return: 字典{命中条数，查询时间(以毫秒为单位)，搜索结果的Record列表}
     """
     dsl = {
         'query': {
@@ -244,3 +283,6 @@ class DSL:
     def set_query_must_not(self, must_not=[]):
         self.query['query']['bool']['must_not'] = must_not
 
+    def set_query(self, should=True, must=False, must_not=False, **kwargs):
+        #
+        pass
