@@ -3,7 +3,8 @@
 <head>
 <meta charset="utf-8">
 <title>搜索</title>
-<link rel="stylesheet" href="../static/css/searchcss.css" type="text/css">
+<link rel="stylesheet" href="{{url_for('static',filename='css/searchcss.css')}}" type="text/css">
+
 	<style>
 		* {
   margin: 0;
@@ -142,12 +143,15 @@ li a.noactive {
 			border-radius: 0 4px 4px 0;
 			color: white;
         }
+		.navbar-header{
+			display: none;
+		}
 	</style>
 
 </head>
 
-<body>
-
+<body >
+<div>
 <br><br>
 <form action="/result" method="post">
 <span class="x">
@@ -155,27 +159,28 @@ li a.noactive {
 	<input type="submit" value="搜索" class="n">
 
 </span>
-	<div class="main">
-<ul>
-<li id="首页"><a class="active" >首页</a></li>
-<li id="学院新闻"><a class="noactive">学院新闻</a></li>
-<li id="院务公开"><a class="noactive">院务公开</a></li>
-<li id="科研信息"><a class="noactive">科研信息</a></li>
-<li id="科研工作"><a class="noactive">科研工作</a></li>
-<li id="学生工作"><a class="noactive">学生工作</a></li>
-<li id="教学工作"><a class="noactive">教学工作</a></li>
-<li id="就业工作"><a class="noactive">就业工作</a></li>
-<li id="会议通知"><a class="noactive">会议通知</a></li>
-<li id="通知公告"><a class="noactive">通知公告</a></li>
-<li id="学院风光"><a class="noactive">学院风光</a></li>
+<div class="main">
+
+<ul class="actice-title">
+<li ><a id="1"     href="/result?tag=1&wd={{request.values.get('wd')}}">首页</a></li>
+<li ><a id="1044"  href="/1044?tag=1044&wd={{request.values.get('wd')}}">学院新闻</a></li>
+<li ><a id="1043"  href="/1043?tag=1043&wd={{request.values.get('wd')}}">院务公开</a></li>
+<li ><a id="1103"  href="/1103?tag=1103&wd={{request.values.get('wd')}}">科研信息</a></li>
+<li ><a id="1010"  href="/1010?tag=1010&wd={{request.values.get('wd')}}">科研工作</a></li>
+<li ><a id="1112"  href="/1112?tag=1112&wd={{request.values.get('wd')}}">学生工作</a></li>
+<li ><a id="1100"  href="/1100?tag=1100&wd={{request.values.get('wd')}}">教学工作</a></li>
+<li ><a id="1042"  href="/1042?tag=1042&wd={{request.values.get('wd')}}">就业工作</a></li>
+<li ><a id="1067"  href="/1067?tag=1067&wd={{request.values.get('wd')}}">会议通知</a></li>
+<li ><a id="1041"  href="/1041?tag=1041&wd={{request.values.get('wd')}}">通知公告</a></li>
+<li ><a id="1004"  href="/1004?tag=1004&wd={{request.values.get('wd')}}">学院风光</a></li>
 </ul>
 
 		</div>
 </form>
 
 <div class="d1">
-	{% for i in result %}
-	<div class="d2" id="{{i[1]}}">
+	{% for i in list %}
+	<div class="d2 {{i[1]}}" >
 		<a href={{i[3]}}  style="position: relative;color:midnightblue;" target="_blank" class="a"><h3 >{{i[2]}}</h3></a>
 
 		<div>
@@ -191,32 +196,33 @@ li a.noactive {
 
 	</div>
 {% endfor %}
+<div style="height: 60px;"></div>
+
 </div>
 
 
 <div class="d3"></div>
+
+</div>
+
 </body>
-<script type="text/javascript">
-	 window.onload = function(){
-            var arr = document.getElementsByTagName('li');
-            for(var i = 0;i<arr.length;i++) {
-				arr[i].onclick = function () {
-					if (this.id != "首页") {
-						document.getElementsByClassName("d2").style.display = 'none';
-						document.getElementById(this.id).style.display = 'block';
-						if(this.className=='noactive')
-						{
-							var temp=document.getElementsByClassName("active");
-							temp.className=='noactive';
-							this.className=='active';
+<script type="text/javascript" charset="utf-8">
 
+	function getQueryVariable(variable)
+	{
+       var query = window.location.search.substring(1);
+       var vars = query.split("&");
+       for (var i=0;i<vars.length;i++) {
+               var pair = vars[i].split("=");
+               if(pair[0] == variable){return pair[1];}
+       }
+       return(false);
+	}
+	tag=getQueryVariable('tag')
+	$(function(){
+     $('#'+tag).addClass("active")
+ });
 
-						}
-
-					}
-				}
-			}
-	 }
 
 </script>
 </html>
