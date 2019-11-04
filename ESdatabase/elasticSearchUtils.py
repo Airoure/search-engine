@@ -145,10 +145,10 @@ def higher_search(index=None, dsl=None):
     :param dsl: DSL类的对象，不可为空。
     :return: 字典{命中条数，查询时间(以毫秒为单位)，搜索结果的Record列表}
     """
-    if dsl is None:
+    if dsl is None or dsl.is_ok() is False:
         print("---dsl类对象是空的，无法执行查询！---")
-        return
-    return search_from_elastic(index, dsl)
+        return {}
+    return search_from_elastic(index, dsl.get_query())
 
 
 def default_search_type(index=None, _type=None):
@@ -267,22 +267,51 @@ class DSL:
                 }
             }
         }
+        self.ok = False
+
+    def is_ok(self):
+        return self.ok
 
     def get_query(self):
         return self.query
 
     def set_query_full(self, query={}):
         self.query = query
+        self.ok = True
 
     def set_query_should(self, should=[]):
         self.query['query']['bool']['should'] = should
+        self.ok = True
 
     def set_query_must(self, must=[]):
         self.query['query']['bool']['must'] = must
+        self.ok = True
 
     def set_query_must_not(self, must_not=[]):
         self.query['query']['bool']['must_not'] = must_not
+        self.ok = True
 
     def set_query(self, should=True, must=False, must_not=False, **kwargs):
-        #
-        pass
+        flag = 'null'
+        if should:
+            flag = 'should'
+        if must:
+            flag = 'must'
+        if must_not:
+            flag = 'must_not'
+        if flag is 'null':
+            print("未指定查询语句类型（should、must、must_not）！")
+            return
+        for key, value in kwargs.items():
+            data = None
+            if key is 'date':
+                pass
+                continue
+            data = {
+                'query_string': {
+                    'default_field': key,
+                    'query': value
+                }
+            }
+            self.query['query']['bool'][flag].append(data)
+        self.ok = True
