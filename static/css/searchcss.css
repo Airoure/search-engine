@@ -131,3 +131,28 @@ h1{
   opacity: 0.5;
   font-weight: bolder;
 }
+.div1{
+		height: 330px;
+		width: 20%;
+		border: 2px solid #CCCCCC;
+        box-shadow: #ccc 0px 10px 10px;
+		float: left;
+		margin-left: 73%;
+		margin-top: 40px;
+		position: fixed;
+
+	}
+	.div2{
+		margin-left: 5%;
+		margin-right: 5%;
+	}
+
+.button{
+		width: 100px;
+		height: 30px;
+		border-radius: 5px;
+		background:#3478B8;
+		color: white;
+		font: inherit;
+		cursor: pointer;
+	}
