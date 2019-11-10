@@ -3,151 +3,7 @@
 <head>
 <meta charset="utf-8">
 <title>搜索</title>
-<link rel="stylesheet" href="{{url_for('static',filename='css/searchcss.css')}}" type="text/css">
-
-	<style>
-		* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-	ul {
-    list-style-type: none;
-    margin-top: 10px;
-    padding: 0;
-    overflow: hidden;
-    border: 1px solid #e7e7e7;
-    background-color: #f3f3f3;
-}
-
-li {
-    float: left;
-	width: 100px;
-	cursor: pointer;
-}
-
-li a {
-    display: block;
-    color: #666;
-    text-align: center;
-    padding: 14px 16px;
-    text-decoration: none;
-}
-
-li a:hover:not(.active) {
-    background-color: #ddd;
-}
-
-li a.active {
-    color: white;
-    background-color: #4CAF50;
-}
-li a.noactive {
-
-}
-	.a{
-		position: relative;
-		color:midnightblue;
-		left: 20px;
-	}
-.d1{
-		width: 65%;
-		height: 900px;
-		float: left;
-		margin-top:30px;
-
-	}
-.d2{
-		width: 100%;
-		height: 120px;
-		background-color:#F8F8F8;
-		left: 0px;
-		position: relative;
-		transition-duration: 0.5s;
-		margin-top: 10px;
-		border-left: solid;
-		border-left-color: midnightblue;
-		border-left-width: 6px;
-	}
-	.d2:hover{
-
-		transform: translateY(-10px);
-		transform: translateX(10px);
-        -webkit-box-shadow: #ccc 0px 10px 10px;
-        -moz-box-shadow: #ccc 0px 10px 10px;
-        box-shadow: #ccc 0px 10px 10px;  }
-
-	.d3{
-		margin-top: 40PX;
-		width: 2px;
-		height: 1290px;
-		margin-left: 50px;
-		background-color: #E1E1E1;
-		float: left;
-
-	}
-	    		.drop{
-    			height:50px;
-				width:165px;
-				color:#fffad9;
-				background-color:#6e59b2;
-				border: none;
-				cursor: pointer;
-				font-size: 150%;
-    		}
-	*{
-            margin: 0;
-            padding: 0;
-            border: none;
-        }
-        .x{
-            display: inline-block;
-
-            margin-left: 24%;
-            position: relative;
-        }
-        .k{
-            width: 536px;
-            height: 38px;
-            border: 1px solid #cccccc;
-            float: left;
-            box-sizing: border-box;
-			border-top: #ccc solid 1px;
-			border-right: none;
-			border-bottom: #ccc solid 1px;
-			border-left: #ccc solid 1px;
-			border-radius: 4px 0 0 4px;
-        }
-		 .x.k>input{
-		outline: none;
-		border: none;
-		padding: 0 80px 0 10px;
-		margin: 0;
-		height: 44px;
-		width: 410px;
-		color: #333;
-		font-size: 16px;
-		border-radius: 4px 0 0 4px;
-	}
-        .n{
-            width: 102px;
-            height: 38px;
-            line-height: 40px;
-            float: left;
-            background-color:#4CAF50;
-            font-size: 16px;
-            /*鼠标悬停按钮上方，光标成手指样式*/
-            cursor: pointer;
-			background-position: center;
-			background-repeat: no-repeat;
-			border-radius: 0 4px 4px 0;
-			color: white;
-        }
-		.navbar-header{
-			display: none;
-		}
-	</style>
-
+<link rel="stylesheet" type="text/css" href="../static/css/result.css" >
 </head>
 
 <body >
@@ -155,30 +11,31 @@ li a.noactive {
 <br><br>
 <form action="/result" method="post" id="formid">
 <span class="x">
-    <input type="text" class="k" name="wd" autocomplete="off">
+    <input type="text" class="k" name="wd" autocomplete="off" placeholder="{{request.values.get('wd')}}">
 	<input type="submit" value="搜索" class="n">
 
 </span>
 <div class="main">
 
 <ul class="actice-title">
-<li ><a id="1"     href="/result?tag=1&wd={{request.values.get('wd')}}">首页</a></li>
-<li ><a id="1044"  href="/1044?tag=1044&wd={{request.values.get('wd')}}">学院新闻</a></li>
-<li ><a id="1043"  href="/1043?tag=1043&wd={{request.values.get('wd')}}">院务公开</a></li>
-<li ><a id="1103"  href="/1103?tag=1103&wd={{request.values.get('wd')}}">科研信息</a></li>
-<li ><a id="1010"  href="/1010?tag=1010&wd={{request.values.get('wd')}}">科研工作</a></li>
-<li ><a id="1112"  href="/1112?tag=1112&wd={{request.values.get('wd')}}">学生工作</a></li>
-<li ><a id="1100"  href="/1100?tag=1100&wd={{request.values.get('wd')}}">教学工作</a></li>
-<li ><a id="1042"  href="/1042?tag=1042&wd={{request.values.get('wd')}}">就业工作</a></li>
-<li ><a id="1067"  href="/1067?tag=1067&wd={{request.values.get('wd')}}">会议通知</a></li>
-<li ><a id="1041"  href="/1041?tag=1041&wd={{request.values.get('wd')}}">通知公告</a></li>
-<li ><a id="1004"  href="/1004?tag=1004&wd={{request.values.get('wd')}}">学院风光</a></li>
+<li ><a id="1"    class='noactive' href="{{url_for('result',wd=request.values.get('wd'),tag=1)}}">首页</a></li>
+<li ><a id="1044" class="noactive" href="{{url_for('index_1044',wd=request.values.get('wd'),tag=1044)}}">学院新闻</a></li>
+<li ><a id="1043" class="noactive" href="{{url_for('index_1043',wd=request.values.get('wd'),tag=1043)}}">院务公开</a></li>
+<li ><a id="1103" class="noactive" href="{{url_for('index_1103',wd=request.values.get('wd'),tag=1103)}}">科研信息</a></li>
+<li ><a id="1010" class="noactive" href="{{url_for('index_1010',wd=request.values.get('wd'),tag=1010)}}">科研工作</a></li>
+<li ><a id="1112" class="noactive" href="{{url_for('index_1112',wd=request.values.get('wd'),tag=1112)}}">学生工作</a></li>
+<li ><a id="1100" class="noactive" href="{{url_for('index_1100',wd=request.values.get('wd'),tag=1100)}}">教学工作</a></li>
+<li ><a id="1042" class="noactive" href="{{url_for('index_1042',wd=request.values.get('wd'),tag=1042)}}">就业工作</a></li>
+<li ><a id="1067" class="noactive" href="{{url_for('index_1067',wd=request.values.get('wd'),tag=1067)}}">会议通知</a></li>
+<li ><a id="1041" class="noactive" href="{{url_for('index_1041',wd=request.values.get('wd'),tag=1041)}}">通知公告</a></li>
+<li ><a id="1004" class="noactive" href="{{url_for('index_1004',wd=request.values.get('wd'),tag=1004)}}">学院风光</a></li>
 </ul>
 
 		</div>
 </form>
 
 <div class="d1">
+    <p>共有{{}}条记录</p>
 	{% for i in list %}
 	<div class="d2 {{i[1]}}" >
 		<a href={{i[3]}}  style="position: relative;color:midnightblue;" target="_blank" class="a"><h3 >{{i[2]}}</h3></a>
@@ -244,21 +101,23 @@ li a.noactive {
     </div>
 </body>
 <script type="text/javascript" charset="utf-8">
-
-	function getQueryVariable(variable)
-	{
-       var query = window.location.search.substring(1);
-       var vars = query.split("&");
-       for (var i=0;i<vars.length;i++) {
-               var pair = vars[i].split("=");
-               if(pair[0] == variable){return pair[1];}
-       }
-       return(false);
+	window.onload =function () {
+	f();
 	}
-	tag=getQueryVariable('tag')
-	$(function(){
-     $('#'+tag).addClass("active")
- });
+	function f() {
+		tag=GetQueryString('tag');
+		//alert(tag);
+
+		document.getElementsByClassName("active")
+		document.getElementById(tag).className='active';
+
+	}
+	function GetQueryString(name)
+{
+     var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+     var r = window.location.search.substr(1).match(reg);//search,查询？后面的参数，并匹配正则
+     if(r!=null)return  unescape(r[2]); return null;
+}
 
 
 </script>
