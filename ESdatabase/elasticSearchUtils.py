@@ -151,9 +151,11 @@ def higher_search(index=None, dsl=None):
     return search_from_elastic(index, dsl.get_query())
 
 
-def default_search_type(index=None, _type=None):
+def default_search_type(index=None, _type=None, flag=False, keyword=None):
     """
     指定一个类型名，搜索库中所有该类型的文章
+    :param keyword: 关键词
+    :param flag: 是否按关键词搜索指定类型下的文章
     :param index: 索引名
     :param _type: 类型名
     :return: 字典{命中条数，查询时间(以毫秒为单位)，搜索结果的Record列表}
@@ -161,7 +163,7 @@ def default_search_type(index=None, _type=None):
     dsl = {
         'query': {
             'bool': {
-                'should': [
+                'must': [
                     {
                         'query_string': {
                             'default_field': 'type',
@@ -172,7 +174,27 @@ def default_search_type(index=None, _type=None):
             }
         }
     }
-    return search_from_elastic(index, dsl)
+    if flag:
+        dsl['query']['bool']['must'].append({
+            'query_string': {
+                'default_field': 'title',
+                'query': keyword
+            }
+        })
+        dsl['query']['bool']['must'].append({
+            'query_string': {
+                'default_field': 'content',
+                'query': keyword
+            }
+        })
+    dic = search_from_elastic(index, dsl)
+    li = dic['list']
+    re = []
+    for i in li:
+        if i.get_type() == _type:
+            re.append(i)
+    dic['list'] = re
+    return dic
 
 
 def default_search(index=None, keyword=None):
@@ -301,7 +323,7 @@ class DSL:
             flag = 'must_not'
         if flag is 'null':
             print("未指定查询语句类型（should、must、must_not）！")
-            return
+            return self.query
         for key, value in kwargs.items():
             data = None
             if key is 'date':
