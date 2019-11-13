@@ -123,12 +123,21 @@ def search_from_elastic(index=None, dsl=None):
                 result = es.scroll(scroll_id=scroll_id, scroll='5m')
                 scroll_id = result['_scroll_id']
             for i in result['hits']['hits']:
-                re = Record(i['_source']['type'],
-                            i['_source']['title'],
-                            i['_source']['href'],
-                            i['_source']['date'],
-                            i['_source']['content'],
-                            i['_id'])
+                re = None
+                if i['highlight'] is None:
+                    re = Record(i['_source']['type'],
+                                i['_source']['title'],
+                                i['_source']['href'],
+                                i['_source']['date'],
+                                i['_source']['content'],
+                                i['_id'])
+                else:
+                    re = Record(i['_source']['type'],
+                                i['highlight']['title'][0],
+                                i['_source']['href'],
+                                i['_source']['date'],
+                                i['highlight']['content'][0],
+                                i['_id'])
                 li.append(re)
     results = {
         'total': total,
@@ -172,6 +181,17 @@ def default_search_type(index=None, _type=None, flag=False, keyword=None):
                     }
                 ]
             }
+        },
+        'sort': {
+            'date': {
+                'order': 'desc'
+            }
+        }
+    }
+    highlight = {
+        'fields': {
+            'title': {},
+            'content': {}
         }
     }
     if flag:
@@ -187,6 +207,8 @@ def default_search_type(index=None, _type=None, flag=False, keyword=None):
                 'query': keyword
             }
         })
+        dsl['highlight'] = highlight
+        print(json.dumps(dsl, indent=4, ensure_ascii=False))
     dic = search_from_elastic(index, dsl)
     li = dic['list']
     re = []
@@ -221,6 +243,17 @@ def default_search(index=None, keyword=None):
                         }
                     }
                 ]
+            }
+        },
+        'highlight': {
+            'fields': {
+                'title': {},
+                'content': {}
+            }
+        },
+        'sort': {
+            'date': {
+                'order': 'desc'
             }
         }
     }
