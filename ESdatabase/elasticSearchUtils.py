@@ -95,6 +95,10 @@ def add_index_mapping(index=None, doc_type="_doc", field=['title', 'content'],
                     'type': mapping_type,
                     'analyzer': analyzer,
                     'search_analyzer': search_analyzer
+                },
+                'date': {
+                    'type': 'date',
+                    'fielddata': True
                 }
             }
     }
@@ -130,14 +134,16 @@ def search_from_elastic(index=None, dsl=None):
                                 i['_source']['href'],
                                 i['_source']['date'],
                                 i['_source']['content'],
-                                i['_id'])
+                                i['_id'],
+                                i['_score'])
                 else:
                     re = Record(i['_source']['type'],
                                 i['highlight']['title'][0],
                                 i['_source']['href'],
                                 i['_source']['date'],
                                 i['highlight']['content'][0],
-                                i['_id'])
+                                i['_id'],
+                                i['_score'])
                 li.append(re)
     results = {
         'total': total,
@@ -264,13 +270,14 @@ class Record:
     """
     将条目封装成一个类，以便直接使用
     """
-    def __init__(self, _type, title, href, date, content, _id=None):
+    def __init__(self, _type, title, href, date, content, _id=None, score=None):
         self.type = _type
         self.title = title
         self.href = href
         self.content = content
         self.date = date
         self.id = _id
+        self.score = score
 
     def display(self):
         print("类型："+self.type)
@@ -296,6 +303,9 @@ class Record:
 
     def get_id(self):
         return self.id
+
+    def get_score(self):
+        return self.score
 
     def to_dict(self):
         _dict = {
@@ -328,7 +338,10 @@ class DSL:
         return self.ok
 
     def get_query(self):
-        return self.query
+        if self.ok:
+            return self.query
+        else:
+            raise DSLError('DSL语句未设置完成，不能进行查询')
 
     def set_query_full(self, query={}):
         self.query = query
@@ -357,6 +370,7 @@ class DSL:
         if flag is 'null':
             print("未指定查询语句类型（should、must、must_not）！")
             return self.query
+        print(kwargs)
         for key, value in kwargs.items():
             data = None
             if key is 'date':
@@ -370,3 +384,20 @@ class DSL:
             }
             self.query['query']['bool'][flag].append(data)
         self.ok = True
+
+    def set_highlight(self, highlight=None):
+        if highlight is None:
+            pass
+        pass
+
+
+class DSLError(Exception):
+    """
+    DSL语句配套的异常错误类，在出错时抛出
+    """
+    def __init__(self, errorinfo):
+        super().__init__(self)
+        self.errorinfo = errorinfo
+
+    def __str__(self):
+        return self.errorinfo
