@@ -95,10 +95,6 @@ def add_index_mapping(index=None, doc_type="_doc", field=['title', 'content'],
                     'type': mapping_type,
                     'analyzer': analyzer,
                     'search_analyzer': search_analyzer
-                },
-                'date': {
-                    'type': 'date',
-                    'fielddata': True
                 }
             }
     }
@@ -187,11 +183,6 @@ def default_search_type(index=None, _type=None, flag=False, keyword=None):
                     }
                 ]
             }
-        },
-        'sort': {
-            'date': {
-                'order': 'desc'
-            }
         }
     }
     highlight = {
@@ -255,11 +246,6 @@ def default_search(index=None, keyword=None):
             'fields': {
                 'title': {},
                 'content': {}
-            }
-        },
-        'sort': {
-            'date': {
-                'order': 'desc'
             }
         }
     }
