@@ -4,38 +4,47 @@
 <meta charset="utf-8">
 <title>搜索</title>
 <link rel="stylesheet" type="text/css" href="../static/css/result.css" >
+	<link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css">
+	<script language="javascript" type="text/javascript" src="https://cdn.staticfile.org/jquery/1.7.2/jquery.min.js"></script>
+
 </head>
 
 <body >
+<div style="display: none;" id="rocket-to-top">
+    <div style="opacity:0;display: block;" class="level-2"></div>
+    <div class="level-3"></div>
+</div>
 <div>
 <br><br>
-<form action="/result" method="post" id="formid">
+<form action="{{url_for('result')}}" method="post" id="formid" onsubmit="return sub()">
 <span class="x">
-    <input type="text" class="k" name="wd" autocomplete="off" placeholder="{{request.values.get('wd')}}">
+    <input type="text" class="k" id="text" name="wd" autocomplete="off" placeholder="{{request.values.get('wd')}}">
 	<input type="submit" value="搜索" class="n">
 
 </span>
 <div class="main">
 
 <ul class="actice-title">
-<li ><a id="1"    class='noactive' href="{{url_for('result',wd=request.values.get('wd'),tag=1)}}">首页</a></li>
-<li ><a id="1044" class="noactive" href="{{url_for('index_1044',wd=request.values.get('wd'),tag=1044)}}">学院新闻</a></li>
-<li ><a id="1043" class="noactive" href="{{url_for('index_1043',wd=request.values.get('wd'),tag=1043)}}">院务公开</a></li>
-<li ><a id="1103" class="noactive" href="{{url_for('index_1103',wd=request.values.get('wd'),tag=1103)}}">科研信息</a></li>
-<li ><a id="1010" class="noactive" href="{{url_for('index_1010',wd=request.values.get('wd'),tag=1010)}}">科研工作</a></li>
-<li ><a id="1112" class="noactive" href="{{url_for('index_1112',wd=request.values.get('wd'),tag=1112)}}">学生工作</a></li>
-<li ><a id="1100" class="noactive" href="{{url_for('index_1100',wd=request.values.get('wd'),tag=1100)}}">教学工作</a></li>
-<li ><a id="1042" class="noactive" href="{{url_for('index_1042',wd=request.values.get('wd'),tag=1042)}}">就业工作</a></li>
-<li ><a id="1067" class="noactive" href="{{url_for('index_1067',wd=request.values.get('wd'),tag=1067)}}">会议通知</a></li>
-<li ><a id="1041" class="noactive" href="{{url_for('index_1041',wd=request.values.get('wd'),tag=1041)}}">通知公告</a></li>
-<li ><a id="1004" class="noactive" href="{{url_for('index_1004',wd=request.values.get('wd'),tag=1004)}}">学院风光</a></li>
+<li class="art-li"><a id="1"    class='noactive' href="{{url_for('result',wd=request.values.get('wd'),tag=1)}}">首页</a></li>
+<li class="art-li"><a id="1044" class="noactive" href="{{url_for('index_1044',wd=request.values.get('wd'),tag=1044)}}">学院新闻</a></li>
+<li class="art-li"><a id="1043" class="noactive" href="{{url_for('index_1043',wd=request.values.get('wd'),tag=1043)}}">院务公开</a></li>
+<li class="art-li"><a id="1103" class="noactive" href="{{url_for('index_1103',wd=request.values.get('wd'),tag=1103)}}">科研信息</a></li>
+<li class="art-li"><a id="1010" class="noactive" href="{{url_for('index_1010',wd=request.values.get('wd'),tag=1010)}}">科研工作</a></li>
+<li class="art-li"><a id="1112" class="noactive" href="{{url_for('index_1112',wd=request.values.get('wd'),tag=1112)}}">学生工作</a></li>
+<li class="art-li"><a id="1100" class="noactive" href="{{url_for('index_1100',wd=request.values.get('wd'),tag=1100)}}">教学工作</a></li>
+<li class="art-li"><a id="1042" class="noactive" href="{{url_for('index_1042',wd=request.values.get('wd'),tag=1042)}}">就业工作</a></li>
+<li class="art-li"><a id="1067" class="noactive" href="{{url_for('index_1067',wd=request.values.get('wd'),tag=1067)}}">会议通知</a></li>
+<li class="art-li"><a id="1041" class="noactive" href="{{url_for('index_1041',wd=request.values.get('wd'),tag=1041)}}">通知公告</a></li>
+<li class="art-li"><a id="1004" class="noactive" href="{{url_for('index_1004',wd=request.values.get('wd'),tag=1004)}}">学院风光</a></li>
 </ul>
 
 		</div>
 </form>
+	<div style="margin-left: 5px;margin-top: 5px;">
+		{{lenth}}条结果
+	</div>
 
 <div class="d1">
-    <p>共有{{}}条记录</p>
 	{% for i in list %}
 	<div class="d2 {{i[1]}}" >
 		<a href={{i[3]}}  style="position: relative;color:midnightblue;" target="_blank" class="a"><h3 >{{i[2]}}</h3></a>
@@ -53,7 +62,14 @@
 
 	</div>
 {% endfor %}
-<div style="height: 60px;"></div>
+
+<div style="height: 10px;margin: 0 auto;text-align:center;">
+	<nav aria-label="Page navigation" >
+                    <ul class="pagination">
+                        {{ html|safe }}
+                    </ul>
+                </nav>
+</div>
 
 </div>
 
@@ -64,22 +80,22 @@
 <div class="div1">
      <div class=div2 id='time'>
       <br>
-       <select name="time">
+       <p><select name="time">
        		<option value="0" selected>不限时间</option>
 			<option value="1">一周内</option>
 			<option value="2">一月内</option>
 			<option value="3">一年内</option>
 
-		</select><br><br>
-  		自定义<br><br>
-   		从：<input type="date" id="startDate" /><br><br>
+		</select></p>
+  		自定义<br>
+   		从：<input type="date" id="startDate" /><br>
    		至：<input type="date" id="endDate" />
    		<hr style="height:1px;border-top:1px solid #CCCCCC; margin-top: 10px" />
    		</div>
 
    		<div class="div2" >
    		<br>
-   			<p>类型</p><br>
+   			<p>类型</p>
    			<select name="type">
    				<option value="" selected>不限类型</option>
    				<option value="1044">学院新闻</option>
@@ -99,26 +115,23 @@
    		<button type="button" class="button" onClick="document.getElementById('formid').submit();">确定</button>
    		</div>
     </div>
+
 </body>
-<script type="text/javascript" charset="utf-8">
-	window.onload =function () {
-	f();
-	}
-	function f() {
-		tag=GetQueryString('tag');
-		//alert(tag);
 
-		document.getElementsByClassName("active")
-		document.getElementById(tag).className='active';
-
+<script type="text/javascript" charset="utf-8" src="{{url_for('static',filename='js/result.js')}}">
+</script>
+<script>
+	function sub() {
+    var wd=document.getElementById("text").value;
+    var form1=document.getElementsByTagName("form")[0];
+    if(wd=="")
+    {
+		form1.action=form1.action+"?wd={{request.values.get('wd')}}&tag=1";
+    }
+    else {
+        form1.action=form1.action+"?wd="+wd+"&tag=1";
 	}
-	function GetQueryString(name)
-{
-     var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
-     var r = window.location.search.substr(1).match(reg);//search,查询？后面的参数，并匹配正则
-     if(r!=null)return  unescape(r[2]); return null;
+
 }
-
-
 </script>
 </html>
