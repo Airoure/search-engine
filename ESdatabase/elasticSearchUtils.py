@@ -308,6 +308,8 @@ class DSL:
     """
     查询语句封装类。
     """
+    data = None
+
     def __init__(self):
         self.query = {
             'query': {
@@ -354,27 +356,67 @@ class DSL:
         if must_not:
             flag = 'must_not'
         if flag is 'null':
-            print("未指定查询语句类型（should、must、must_not）！")
-            return self.query
+            raise DSLError("未指定查询语句类型（should、must、must_not）！")
         print(kwargs)
         for key, value in kwargs.items():
-            data = None
+            global data
             if key is 'date':
-                pass
-                continue
-            data = {
-                'query_string': {
-                    'default_field': key,
-                    'query': value
+                if value.has_key('type'):
+                    if value['type'] is 'range':
+                        data = {
+                            'range': {
+                                'date': {
+                                    'format': 'yyyy-MM-dd hh:mm:ss'
+                                }
+                            }
+                        }
+                        k = False
+                        if value.has_key('lt'):
+                            data['range']['date']['lt'] = value['lt']
+                            k = True
+                        if value.has_key('lte'):
+                            data['range']['date']['lte'] = value['lte']
+                            k = True
+                        if value.has_key('gt'):
+                            data['range']['date']['gt'] = value['gt']
+                            k = True
+                        if value.has_key('gte'):
+                            data['range']['date']['gte'] = value['gte']
+                            k = True
+                        if not k:
+                            raise DSLError('range模式需要设置date字典中的lt、lte、gt、gte字段的数据！')
+                    else:
+                        data = {
+                            'query_string': {
+                                'date': {
+                                    'default_field': 'date'
+                                }
+                            }
+                        }
+                        if value.has_key('string'):
+                            data['query_string']['date']['string'] = value['string']
+                        else:
+                            raise DSLError('query_string模式需要设置date字典中的string字段的数据！')
+                else:
+                    raise DSLError('需要指定date字段搜索的类型（字典元素名为type）：range、query_string！')
+            else:
+                data = {
+                    'query_string': {
+                        'default_field': key,
+                        'query': value
+                    }
                 }
-            }
             self.query['query']['bool'][flag].append(data)
         self.ok = True
 
-    def set_highlight(self, highlight=None):
-        if highlight is None:
-            pass
-        pass
+    def set_highlight(self):
+        e = {
+            'fields': {
+                'title': {},
+                'content': {}
+            }
+        }
+        self.query['highlight'] = e
 
 
 class DSLError(Exception):
